@@ -11,6 +11,8 @@ function MyApp() {
       .then((res) => {
         if (res.status === 201) {
             return res.json();
+        } else {
+            console.error("Failed to add user.");
         }
       })
       .then((newPerson) => {
@@ -26,18 +28,18 @@ function MyApp() {
 
   useEffect(() => {
   fetchUsers()
-    .then((res) => res.json())       // Bước 4a
-    .then((json) => setCharacters(json["users_list"]))  // Bước 4b
-    .catch((error) => { console.log(error); });         // Bước 4c
+    .then((res) => res.json())
+    .then((json) => setCharacters(json["users_list"]))
+    .catch((error) => { console.log(error); });
   }, []);
 
   function postUser(person) {
     const promise = fetch("http://localhost:8000/users", {
-      method: "POST",              // Báo đây là POST request
+      method: "POST",
       headers: {
-        "Content-Type": "application/json",  // Báo body là JSON
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(person),  // Chuyển object → string JSON
+      body: JSON.stringify(person),
     });
     return promise;
   }
@@ -52,13 +54,17 @@ function MyApp() {
     </div>
   );
 
-  function removeOneCharacter(id) {
+  function removeOneCharacter(index) {
+    const id = characters[index].id;
     fetch(`http://localhost:8000/users/${id}`, {
       method: "DELETE"
     })
     .then((res) => {
       if (res.status === 204) {
-        setCharacters(characters.filter(c => c.id !== id));
+        setCharacters(characters.filter((character, i) => {
+          if (i == index) id = character.id;
+          return i !== index;
+        }));
       } else {
         console.error("User not found.");
       }
