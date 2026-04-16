@@ -54,14 +54,16 @@ function MyApp() {
 
   function removeOneCharacter(id) {
     fetch(`http://localhost:8000/users/${id}`, {
-        method: "DELETE"
+      method: "DELETE"
     })
     .then((res) => {
-        if (res.status === 204) {
-            setCharacters(characters.filter(c => c.id !== id));
-        }
+      if (res.status === 204) {
+        setCharacters(characters.filter(c => c.id !== id));
+      } else {
+        console.error("User not found.");
+      }
     })
-    .catch((error) => { console.log(error); });
+    .catch((error) => console.log(error));
   }
 }
 
